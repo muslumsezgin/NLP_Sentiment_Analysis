@@ -59,6 +59,12 @@ public class Main {
         Logger.printResult("TN: " + TN);
         Logger.printResult("FP: " + FP);
         Logger.printResult("FN: " + FN);
+        double precision = (double)TP / (TN + FN);
+        double recall = (double) TP / (TP+FN);
+        double fScore = (2.0 * TP) / (2.0 * TP + FP + FN);
+        Logger.printResult("Precision: " + precision * 100 + "%");
+        Logger.printResult("Recall: " + recall * 100 + "%");
+        Logger.printResult("F-Score: " + fScore * 100 + "%");
         Logger.printInfo("Total time: " + Logger.printTime(startProcessTime));
 
     }
