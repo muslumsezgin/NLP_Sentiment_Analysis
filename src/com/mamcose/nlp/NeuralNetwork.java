@@ -7,9 +7,7 @@ import java.util.stream.IntStream;
 
 public class NeuralNetwork {
 
-    private double biasInput = 1.0;
-    private double biasHidden = 1.0;
-    private double learningRate = 0.08;
+    private double learningRate = 0.25;
 
     private ArrayList<Neuron> inputLayer, hiddenLayer;
     private Neuron outputNeuron;
@@ -20,8 +18,8 @@ public class NeuralNetwork {
     }
 
     public void init(int inputLayerSize, int hiddenLayerSize) {
-        initLayers(inputLayer, inputLayerSize, biasInput);
-        initLayers(hiddenLayer, hiddenLayerSize, biasHidden);
+        initLayers(inputLayer, inputLayerSize);
+        initLayers(hiddenLayer, hiddenLayerSize);
         outputNeuron = new Neuron(HyperbolicTangent.getInstance());
         initConnections();
     }
@@ -30,11 +28,9 @@ public class NeuralNetwork {
      * Katmanlara nöron ekleme işlemini yapar
      * @param list Katman
      * @param size Eklenecek nöron sayısı
-     * @param bias Son nörona eklenecek bias değeri
      */
-    private void initLayers(ArrayList<Neuron> list, int size, double bias) {
-        IntStream.range(0, size - 1).forEach(i -> list.add(new Neuron()));
-        list.add(new Neuron(bias));
+    private void initLayers(ArrayList<Neuron> list, int size) {
+        IntStream.range(0, size).forEach(i -> list.add(new Neuron()));
     }
 
     /**
@@ -76,32 +72,24 @@ public class NeuralNetwork {
             Neuron neuronToTweak = hiddenLayer.get(i);
             double output = neuronToTweak.getOutput();
 
-            //double tweakedWeight = output * HyperbolicTangent.getInstance().derivative(error) * HyperbolicTangent.getInstance().derivative(forwardPropResult);
-            //double tweakedWeight = error * (output) * (1 - Math.pow(forwardPropResult, 2));
-            double tweakedWeight = error * (output) * (forwardPropResult) * (1 - forwardPropResult);
+            double tweakedWeight = error * (output) * (1 - Math.pow(forwardPropResult, 2));
+            //double tweakedWeight = error * (output) * (forwardPropResult) * (1 - forwardPropResult);
 
-            double tweakedBias = error * (forwardPropResult)*(1-forwardPropResult);
+            //double tweakedBias = neuronToTweak.getBias() * error * (1 - Math.pow(forwardPropResult, 2));
+            double tweakedBias = neuronToTweak.getBias() * error * (forwardPropResult)*(1-forwardPropResult);
 
             neuronToTweak.getConnections().get(i).updateWeight(learningRate * tweakedWeight);
-            biasHidden -= tweakedBias * learningRate;
+            neuronToTweak.updateBias(learningRate * tweakedBias);
         }
         // Input layer ve hidden layer arasındaki bağlantıları ayarlıyoruz
         for (Neuron neuron : inputLayer) {
             for (int j = 0; j < hiddenLayer.size(); j++) {
                 double deltaWeight = error * neuron.getOutputDerivative() * neuron.getOutput();
-                double deltaBias = error*neuron.getOutputDerivative();
+                double deltaBias = error * neuron.getOutputDerivative() * neuron.getBias();
                 neuron.getConnections().get(j).updateWeight(learningRate * deltaWeight);
-                biasInput -= deltaBias * learningRate;
+                neuron.updateBias(learningRate * deltaBias);
             }
         }
-    }
-
-    public void setBiasHidden(double biasHidden) {
-        this.biasHidden = biasHidden;
-    }
-
-    public void setBiasInput(double biasInput) {
-        this.biasInput = biasInput;
     }
 
     public void setLearningRate(double learningRate) {

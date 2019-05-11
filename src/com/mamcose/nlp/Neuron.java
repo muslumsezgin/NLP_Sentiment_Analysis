@@ -2,25 +2,27 @@ package com.mamcose.nlp;
 
 import com.mamcose.nlp.ActivationFunctions.ActivationFunction;
 import com.mamcose.nlp.ActivationFunctions.LeakyReLU;
+import com.mamcose.nlp.ActivationFunctions.Sigmoid;
 
 import java.util.ArrayList;
 
 public class Neuron {
 
     private double output; //nöronun çıktısı
+    private double bias = 1.0;
     private ArrayList<Connections> synapses; //nörondaki tüm bağlantılar
     private ActivationFunction activationFunction; //nöron aktivasyon fonksiyonu
 
     public Neuron() {
         output = 0;
         synapses = new ArrayList<>();
-        activationFunction = LeakyReLU.getInstance();
+        activationFunction = Sigmoid.getInstance();
     }
 
     public Neuron(double output) {
         this.output = output;
         synapses = new ArrayList<>();
-        activationFunction = LeakyReLU.getInstance();
+        activationFunction = Sigmoid.getInstance();
     }
 
     public Neuron(ActivationFunction activationFunction) {
@@ -45,7 +47,7 @@ public class Neuron {
                 sum += (c.getWeight() * c.getFrom().getOutput());
             }
         }
-        output = activationFunction.execute(sum);
+        output = activationFunction.execute(sum + bias);
     }
 
     /**
@@ -76,5 +78,13 @@ public class Neuron {
 
     public double getOutputDerivative() {
         return activationFunction.derivative(getOutput());
+    }
+
+    public double updateBias(double update){
+        return bias -= update;
+    }
+
+    public double getBias() {
+        return bias;
     }
 }
