@@ -14,13 +14,13 @@ public class Neuron {
     public Neuron() {
         output = 0;
         synapses = new ArrayList<>();
-        activationFunction = new LeakyReLU();
+        activationFunction = LeakyReLU.getInstance();
     }
 
     public Neuron(double output) {
         this.output = output;
         synapses = new ArrayList<>();
-        activationFunction = new LeakyReLU();
+        activationFunction = LeakyReLU.getInstance();
     }
 
     public Neuron(ActivationFunction activationFunction) {

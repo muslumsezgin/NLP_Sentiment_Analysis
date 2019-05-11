@@ -22,7 +22,7 @@ public class NeuralNetwork {
     public void init(int inputLayerSize, int hiddenLayerSize) {
         initLayers(inputLayer, inputLayerSize, biasInput);
         initLayers(hiddenLayer, hiddenLayerSize, biasHidden);
-        outputNeuron = new Neuron(new HyperbolicTangent());
+        outputNeuron = new Neuron(HyperbolicTangent.getInstance());
         initConnections();
     }
 
@@ -60,27 +60,29 @@ public class NeuralNetwork {
     }
 
     public double backPropagation(ArrayList<Integer> inputs, int actual) {
-        double forwardPropResult = forwardPropagation(inputs); //first considers the net's output
+        double forwardPropResult = forwardPropagation(inputs);
         double error = (forwardPropResult - actual);
-        //first we tweak the connections from hidden layer to output neuron
+
         for (int i = 0; i < hiddenLayer.size(); i++) {
-            Neuron neuronToTweak = hiddenLayer.get(i); //we consider the connection of a neuron in hidden layer
-            double output = neuronToTweak.getOutput();  // we get its result i.e. the input for the output layer
-            //TODO hata fonk bias güncelle
-            //multiplying by tanh derivative
-//            double tweakedWeight = error * (output) * (1 - Math.pow(forwardPropResult, 2));
+            Neuron neuronToTweak = hiddenLayer.get(i);
+            double output = neuronToTweak.getOutput();
+
+            //double tweakedWeight = output * HyperbolicTangent.getInstance().derivative(error) * HyperbolicTangent.getInstance().derivative(forwardPropResult);
+            //double tweakedWeight = error * (output) * (1 - Math.pow(forwardPropResult, 2));
             double tweakedWeight = error * (output) * (forwardPropResult) * (1 - forwardPropResult);
-            //double tweakedBias = error* (forwardPropResult)*(1-forwardPropResult);
+
+            double tweakedBias = error* (forwardPropResult)*(1-forwardPropResult);
+
             neuronToTweak.getConnections().get(i).updateWeight(learningRate * tweakedWeight);
+            biasHidden -= tweakedBias * learningRate;
         }
-        // Now we adjust the connections between input layer and hidden layer
+        // Input layer ve hidden layer arasındaki bağlantıları ayarlıyoruz
         for (Neuron neuron : inputLayer) {
             for (int j = 0; j < hiddenLayer.size(); j++) {
-                //deltaWeight= amount by which to update weight
                 double deltaWeight = error * neuron.getOutputDerivative() * neuron.getOutput();
-                //TODO bias yap
-//                double deltaBias = error*neuron.getOutputDerivative();
+                double deltaBias = error*neuron.getOutputDerivative();
                 neuron.getConnections().get(j).updateWeight(learningRate * deltaWeight);
+                biasInput -= deltaBias * learningRate;
             }
         }
         return forwardPropResult;
