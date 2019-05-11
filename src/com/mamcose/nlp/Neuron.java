@@ -1,8 +1,6 @@
 package com.mamcose.nlp;
 
-import com.mamcose.nlp.ActivationFunctions.ActivationFunction;
-import com.mamcose.nlp.ActivationFunctions.LeakyReLU;
-import com.mamcose.nlp.ActivationFunctions.Sigmoid;
+import com.mamcose.nlp.ActivationFunctions.*;
 
 import java.util.ArrayList;
 
@@ -16,13 +14,13 @@ public class Neuron {
     public Neuron() {
         output = 0;
         synapses = new ArrayList<>();
-        activationFunction = Sigmoid.getInstance();
+        activationFunction = HyperbolicTangent.getInstance();
     }
 
     public Neuron(double output) {
         this.output = output;
         synapses = new ArrayList<>();
-        activationFunction = Sigmoid.getInstance();
+        activationFunction = HyperbolicTangent.getInstance();
     }
 
     public Neuron(ActivationFunction activationFunction) {
