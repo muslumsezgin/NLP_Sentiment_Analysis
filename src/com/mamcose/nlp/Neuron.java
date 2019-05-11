@@ -35,7 +35,9 @@ public class Neuron {
         this.activationFunction = activationFunction;
     }
 
-
+    /**
+     * Nöronun çıktısını günceller
+     */
     public void neuronOutputGuess() {
         double sum = 0.0;
         for (Connections c : synapses) {

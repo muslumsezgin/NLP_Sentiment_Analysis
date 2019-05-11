@@ -51,7 +51,18 @@ public class Logger {
         System.out.print("\n\n" + ANSI_GREEN + "RESULT: " + text + ANSI_RESET);
     }
 
+    public static void printError(String text) {
+        System.out.print("\n\n" + ANSI_RED + "ERROR: " + text + ANSI_RESET);
+    }
+
     public static String printColor(String text, String color) {
         return color + text + ANSI_RESET;
+    }
+
+    public static String  printTime(long time){
+        long eta =  (System.currentTimeMillis() - time);
+        return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(eta),
+                TimeUnit.MILLISECONDS.toMinutes(eta) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(eta) % TimeUnit.MINUTES.toSeconds(1));
     }
 }

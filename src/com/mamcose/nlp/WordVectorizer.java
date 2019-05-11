@@ -4,11 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.IntStream;
+import java.util.*;
 
 public class WordVectorizer implements Text2Matrix {
     private int indexData = 5;
@@ -36,10 +32,12 @@ public class WordVectorizer implements Text2Matrix {
         this.pathStopWords = ".\\resources\\stopwords.txt";
     }
 
-    public WordVectorizer(String pathTraining, String pathTest, String pathStopWords) {
+    public WordVectorizer(String pathTraining, String pathTest, String pathStopWords, int indexData, int indexLabel) {
         this.pathTraining = pathTraining;
         this.pathTest = pathTest;
         this.pathStopWords = pathStopWords;
+        this.indexData = indexData;
+        this.indexLabel = indexLabel;
     }
 
     public void init() {
@@ -71,7 +69,7 @@ public class WordVectorizer implements Text2Matrix {
                 matrix.add(wordVectorizer(l));
             }
         } catch (IOException e) {
-            System.out.println("!! Training Data Not Reading !!");
+            Logger.printError("!! Training Data Not Reading !!");
             System.exit(0);
         }
     }
@@ -96,7 +94,7 @@ public class WordVectorizer implements Text2Matrix {
                 matrixTest.add(wordVectorizer(l));
             }
         } catch (IOException ex) {
-            System.out.println("!! Test Data Not Reading !!");
+            Logger.printError("!! Test Data Not Reading !!");
             System.exit(0);
         }
     }
@@ -112,7 +110,7 @@ public class WordVectorizer implements Text2Matrix {
             bfr.lines().forEach(stopWord -> this.stopWords.add(stopWord));
             bfr.close();
         } catch (IOException e) {
-            System.out.println("!! Stop Words Not Found !!");
+            Logger.printError("!! Stop Words Not Found !!");
             System.exit(0);
         }
     }
@@ -123,12 +121,13 @@ public class WordVectorizer implements Text2Matrix {
     private void removeLowFreqWords() {
         Logger.printInfo("Remove Low Frequency Words");
         long startTime = System.currentTimeMillis();
-        for (int i = 0; i < wordsList.size(); i++) {
-            if ((Collections.frequency(wordsList, wordsList.get(i)) <= 2) || " ".equals(wordsList.get(i))) {
-                bagOfWords.remove(wordsList.get(i));
-                Logger.printProgress(startTime, wordsList.size(), i,
-                        Logger.printColor("!! The total process may take shorter !!", Logger.ANSI_RED));
+        Set<String> set = new HashSet<>(wordsList);
+        int i = 1;
+        for (String s : set){
+            if ((Collections.frequency(wordsList, s) <= 2) || " ".equals(s)) {
+                bagOfWords.remove(s);
             }
+            Logger.printProgress(startTime, set.size(),i++,"");
         }
         bagOfWords.removeAll(stopWords);
     }
