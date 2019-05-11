@@ -6,10 +6,10 @@ public class Main {
 
         long startProcessTime = System.currentTimeMillis();
 
-        int hiddenLayerSize = 25;
-        int epochSize = 15;
-        double tolerance = 0.05;
-        double learningRate = 0.08;
+        int hiddenLayerSize = 50;
+        int epochSize = 20;
+        double tolerance = 0.2;
+        double learningRate = 0.05;
 
         WordVectorizer wordVectorizer = new WordVectorizer();
         wordVectorizer.init();
@@ -30,18 +30,35 @@ public class Main {
 
         Logger.printInfo("Test Process");
         startTime = System.currentTimeMillis();
-        int count = 0, sCount = 0;
+        int count = 0;
+        int TP = 0,TN = 0,FP = 0,FN = 0;
+
         for (int i = 0; i < wordVectorizer.getMatrixTest().size(); i++) {
             double error = 0.5 * Math.pow(neuralNetwork.forwardPropagation(wordVectorizer.getMatrixTest().get(i)) - wordVectorizer.getLabelsTest().get(i), 2);
-            if (error == 0.0) count++;
-            if (error < tolerance) sCount++;
+
+            if(wordVectorizer.getLabelsTest().get(i) == 1){
+                if(error <= tolerance)
+                    TP++;
+                else
+                    FN++;
+            }else{
+                if(error <= tolerance)
+                    TN++;
+                else
+                    FP++;
+            }
+
+            if (error <= tolerance) count++;
+
             Logger.printProgress(startTime, wordVectorizer.getMatrixTest().size(), i + 1, "");
         }
 
         Logger.printResult("Success Size: " + count);
         Logger.printResult(String.format("Accuracy: %.2f", count / (wordVectorizer.getMatrixTest().size() / 100.0)) + "%");
-        Logger.printResult("Smooth Success Size: " + sCount);
-        Logger.printResult(String.format("Smooth Accuracy: %.2f", sCount / (wordVectorizer.getMatrixTest().size() / 100.0)) + "%");
+        Logger.printResult("TP: " + TP);
+        Logger.printResult("TN: " + TN);
+        Logger.printResult("FP: " + FP);
+        Logger.printResult("FN: " + FN);
         Logger.printInfo("Total time: " + Logger.printTime(startProcessTime));
 
     }
