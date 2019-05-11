@@ -26,11 +26,20 @@ public class NeuralNetwork {
         initConnections();
     }
 
+    /**
+     * Katmanlara nöron ekleme işlemini yapar
+     * @param list Katman
+     * @param size Eklenecek nöron sayısı
+     * @param bias Son nörona eklenecek bias değeri
+     */
     private void initLayers(ArrayList<Neuron> list, int size, double bias) {
         IntStream.range(0, size - 1).forEach(i -> list.add(new Neuron()));
         list.add(new Neuron(bias));
     }
 
+    /**
+     * Nöronlar arasındaki bağlantıları kurar
+     */
     private void initConnections() {
         for (Neuron i : inputLayer) {
             for (Neuron h : hiddenLayer) {
@@ -50,17 +59,17 @@ public class NeuralNetwork {
 
     public double forwardPropagation(ArrayList<Integer> inputArray) {
         for (int i = 0; i < inputArray.size(); i++) {
-            inputLayer.get(i).setOutput(inputArray.get(i));
+            inputLayer.get(i).setOutput(inputArray.get(i)); // input layerdaki nöronların çıkışlarını set eder
         }
         for (int i = 0; i < hiddenLayer.size() - 1; i++) {
-            hiddenLayer.get(i).neuronOutputGuess();
+            hiddenLayer.get(i).neuronOutputGuess(); // hidden layerdaki nöronların çıkışlarını hesaplar
         }
-        outputNeuron.neuronOutputGuess();
-        return outputNeuron.getOutput();
+        outputNeuron.neuronOutputGuess(); // output nöronunun çıkışını hesaplar
+        return outputNeuron.getOutput(); // output nöronunun çıkışını döner
     }
 
-    public double backPropagation(ArrayList<Integer> inputs, int actual) {
-        double forwardPropResult = forwardPropagation(inputs);
+    public void backPropagation(ArrayList<Integer> inputs, int actual) {
+        double forwardPropResult = forwardPropagation(inputs); // output nöronunun çıkış değeri
         double error = (forwardPropResult - actual);
 
         for (int i = 0; i < hiddenLayer.size(); i++) {
@@ -71,7 +80,7 @@ public class NeuralNetwork {
             //double tweakedWeight = error * (output) * (1 - Math.pow(forwardPropResult, 2));
             double tweakedWeight = error * (output) * (forwardPropResult) * (1 - forwardPropResult);
 
-            double tweakedBias = error* (forwardPropResult)*(1-forwardPropResult);
+            double tweakedBias = error * (forwardPropResult)*(1-forwardPropResult);
 
             neuronToTweak.getConnections().get(i).updateWeight(learningRate * tweakedWeight);
             biasHidden -= tweakedBias * learningRate;
@@ -85,7 +94,6 @@ public class NeuralNetwork {
                 biasInput -= deltaBias * learningRate;
             }
         }
-        return forwardPropResult;
     }
 
     public void setBiasHidden(double biasHidden) {
