@@ -131,7 +131,7 @@ public class WordVectorizer implements Text2Matrix {
         Set<String> set = new HashSet<>(wordsList);
         int i = 1;
         for (String s : set){
-            if ((Collections.frequency(wordsList, s) <= 2) || " ".equals(s)) {
+            if ((Collections.frequency(wordsList, s) <= 2) || " ".equals(s) || "".equals(s)) {
                 bagOfWords.remove(s);
             }
             Logger.printProgress(startTime, set.size(),i++,"");
