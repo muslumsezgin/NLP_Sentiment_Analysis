@@ -27,9 +27,16 @@ public class WordVectorizer implements Text2Matrix {
     private ArrayList<String> linesTest = new ArrayList<>();//test verisindeki tüm cümleler
 
     public WordVectorizer() {
-        this.pathTraining = ".\\resources\\training.csv";
-        this.pathTest = ".\\resources\\test.csv";
-        this.pathStopWords = ".\\resources\\stopwords.txt";
+        String os = System.getProperty("os.name").toLowerCase();
+        if(os.indexOf("mac") >= 0){
+            this.pathTraining = "./resources/training.csv";
+            this.pathTest = "./resources/test.csv";
+            this.pathStopWords = "./resources/stopwords.txt";
+        }else if(os.indexOf("win") >= 0){
+            this.pathTraining = ".\\resources\\training.csv";
+            this.pathTest = ".\\resources\\test.csv";
+            this.pathStopWords = ".\\resources\\stopwords.txt";
+        }
     }
 
     public WordVectorizer(String pathTraining, String pathTest, String pathStopWords, int indexData, int indexLabel) {
