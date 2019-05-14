@@ -78,7 +78,7 @@ public class NeuralNetwork {
             //double tweakedBias = neuronToTweak.getBias() * error * (1 - Math.pow(forwardPropResult, 2));
             double tweakedBias = neuronToTweak.getBias() * error * (forwardPropResult)*(1-forwardPropResult);
 
-            neuronToTweak.getConnections().get(i).updateWeight(learningRate * tweakedWeight);
+            outputNeuron.getConnections().get(i).updateWeight(learningRate * tweakedWeight);
             neuronToTweak.updateBias(learningRate * tweakedBias);
         }
         // Input layer ve hidden layer arasındaki bağlantıları ayarlıyoruz
