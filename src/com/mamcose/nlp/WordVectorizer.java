@@ -147,11 +147,11 @@ public class WordVectorizer implements Text2Matrix {
      */
     @Override
     public String textCleaner(String line) {
-        return line.replaceAll("[!#$%^&*?|'_=\\[\\],.;?\"0-9/;():-]", "")
-                .replace("RT", "")
-                .replaceAll("http.*?\\s", "")
-                .replaceAll("@.*?\\s", "")
+        return line.replaceAll("@.*?\\s", "")
+                .replaceAll("http.*", "")
                 .replaceAll("www.*?\\s", "")
+                .replaceAll("[!#$%^&*?|'_=\\[\\],.;?\"0-9/;():-]", "")
+                .replace("RT", "")
                 .replace("quot", "")
                 .replace("amp", "");
     }
